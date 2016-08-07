@@ -1,0 +1,83 @@
+{{extend 'layout.html'}}
+<h1>{{=T('SQL Query')}}</h1>
+<h3>{{=T('Available tables:')}}</h4>
+{{for t in tables:}}
+<h4 style="display:inline;">{{=t.upper()}}&nbsp;&nbsp;,&nbsp;</h4>
+{{pass}}
+
+<hr/>
+{{=form}}
+<hr/>
+{{if sql_result is not None and len(sql_result)>0:}}
+{{keys = sorted( sql_result[0].keys() )
+  if 'id' in keys:
+      keys.remove('id')
+      keys.insert(0,'id')
+      pass}}
+<h2>Result</h2>
+    <table class="table">
+    <tr>
+    {{for x in keys:}}
+        <th>
+        {{=x}}
+        </th>
+    {{pass}}
+    </tr>
+    {{for row in sql_result:}}
+        <tr>
+        {{for x in keys:}}
+            <td>
+            {{=row[x]}}
+            </td>
+        {{pass}}
+        </tr>
+    {{pass}}
+    </table>
+{{elif sql_result is not None and len(sql_result)==0:}}
+<h2>Result</h2>
+<h4>
+    No entries found
+</h4>
+{{pass}}
+{{if sql_error is not None:}}
+    <h2>Query error:</h2>
+    <h4>
+    {{=sql_error}}
+    </h4>
+{{pass}}
+<script>
+// global dict to hold older queries
+var older_queries={};
+    
+$(function load_query_history() {
+  $.ajax({
+    url: "/ajax/query_history.xml",
+    dataType: "xml",
+    success: function( xml ) {
+        items = $( $(xml).find('rows').text() );
+        for( var i=0; i<items.length; i++)
+        {
+            // populate older queries dictionary
+            qname = $( items[i] ).find('query_name').text();
+            sql_query = $( items[i] ).find('sql_query').text();
+            older_queries[qname]=sql_query;
+        }
+    }
+  });
+});
+
+$(function set_dd_handler()
+ {
+    $("#no_table_saved_queries").change(function(){
+        var qname = $(this).val();
+        if(qname == "") return;
+        var qsql = older_queries[qname];
+        $("#no_table_query_name").val(qname);
+        $("#no_table_sql_query").val(qsql);
+    });
+ }
+);
+
+</script>
+
+{{#=response.toolbar()}}

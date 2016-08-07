@@ -1,0 +1,17 @@
+{{extend 'layout.html'}}
+<h1>Medical Device History</h1>
+<h2>Lookup</h2>
+{{=form}}
+<h3>
+    Results
+</h3>
+<table class="table">
+    {{for entry in entries:}}
+    <tr>
+        <td>{{=entry.site.name}}</td>
+        <td>{{=entry.device.make+"/"+entry.device.model}}</td>
+        <td>{{=entry.patient_id}}</td>
+        <td>{{=entry.time_used}}</td>
+    </tr>
+    {{pass}}
+</table>

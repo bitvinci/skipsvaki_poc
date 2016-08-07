@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}
+<h1>{{=T('Medical Site')}}</h1>
+<h2>{{=T('Status')}}</h2>
+<table class="table">
+    <tr>
+        <th>{{=T("Name")}}</th>
+        <th>{{=T("Country")}}</th>
+        <th>{{=T("Address")}}</th>
+        <th>{{=T("Phone Number")}}</th>
+        <th>{{=T("Devices")}}</th>
+    </tr>
+    {{for s in sites:}}
+    <tr>
+        <td>{{=s.name}}</td>
+        <td>{{=T(s.country)}}</td>
+        <td>{{=s.address}}</td>
+        <td>{{=s.phone_number}}</td>
+        <td>
+            {{if hasattr(s, 'device_list'):}}
+            <ul>
+            {{for dev in s.device_list:}}
+                  <li>
+                  {{=dev.make+"/"+dev.model}}
+                  </li>
+            {{pass}}
+            </ul>
+            {{pass}}
+        </td>
+    </tr>
+    {{pass}}
+</table>
+{{include 'mapdata.html'}}
